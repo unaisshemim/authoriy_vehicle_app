@@ -32,7 +32,7 @@ export default function TopBoxes() {
       style={{ display: "flex", justifyContent: "space-around", marginTop: 20 }}
     >
       {heading.map((value) => (
-        <Card sx={{ minWidth: 300 }} variant="outlined">
+        <Card sx={{ minWidth: 300 }} variant="outlined" key={`heading ${value}`}>
           <CardContent>
             <Typography variant="h3" color="text.secondary" component="div">
               {value.title}{" "}
