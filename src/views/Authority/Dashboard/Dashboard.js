@@ -9,10 +9,8 @@ const Dashboard = () => {
 
   return (
     <Background heading={heading}>
-     
-        <TopBoxes />
-        <Table />
-      
+      <TopBoxes />
+      <Table />
     </Background>
   );
 };

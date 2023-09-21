@@ -7,7 +7,6 @@ const heading = [
   {
     title: "Today Transaction",
     count: 12342,
-    
   },
   {
     title: "Vehicle Registration",
@@ -24,15 +23,17 @@ const heading = [
 ];
 
 export default function TopBoxes() {
- 
-
   const color = "red";
   return (
     <div
       style={{ display: "flex", justifyContent: "space-around", marginTop: 20 }}
     >
-      {heading.map((value) => (
-        <Card sx={{ minWidth: 300 }} variant="outlined" key={`heading ${value.title}`}>
+      {heading.map((value, index) => (
+        <Card
+          sx={{ minWidth: 300 }}
+          variant="outlined"
+          key={index+'head'}
+        >
           <CardContent>
             <Typography variant="h3" color="text.secondary" component="div">
               {value.title}{" "}
