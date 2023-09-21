@@ -40,7 +40,7 @@ export default function TopBoxes() {
             </Typography>
 
             <Typography variant="h3" mt={2} ml={2}>
-              {value.count} (<span style={{ color: color }}>+3.6%</span>)
+              {value.count} <span style={{ color: color }}>+3.6%</span>
             </Typography>
           </CardContent>
         </Card>

@@ -4,7 +4,7 @@ import ReqTable from './ReqTable'
 
 const Request = () => {
   return (
-    <Background heading={"Pending Request"}>
+    <Background heading={"Register Request"}>
       <ReqTable/>
     </Background>
   )

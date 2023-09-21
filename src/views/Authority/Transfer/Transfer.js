@@ -4,7 +4,7 @@ import ReqTable from './transferReqTable'
 
 const Transfer = () => {
   return (
-    <Background heading={"Pending Request"}>
+    <Background heading={"Transfer Request"}>
       <ReqTable/>
     </Background>
   )
