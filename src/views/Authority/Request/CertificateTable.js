@@ -3,56 +3,97 @@ import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
+import { useLocation } from "react-router";
+import axios from "axios";
+import { useState } from "react";
+import { useEffect } from "react";
 
-function createData(name, prev) {
-  return { name, prev };
+function createData(name, value, link = null) {
+  return { name, value, link };
 }
 
-const rows = [
-  createData("Vehicle Details", "preview"),
-  createData("Contract Details", "preview"),
-  createData("Vehicle Insurance", "preview"),
-  createData("Identity Document", "preview"),
-  createData("Passport", "preview"),
-  createData("Labour Card", "preview"),
-  createData("Driving License", "preview"),
-  createData("Sponsor Stamp", "preview"),
-  createData("Auction Stamp", "preview"),
-];
+export default function CarTable() {
+  let { state } = useLocation();
+  const [data, setData] = useState([]);
 
-export default function CertificateTable() {
+  const vin = state.data;
+
+  const rows = [
+    createData("Vin", data.Vin),
+    createData("Color", data?.color),
+    createData("Metamask Address", data?.metamaskaddress),
+    createData("Model", data?.model),
+    createData("Auction Document", "link", data?.auctiondocument),
+    createData("Type", data.type),
+
+    createData("Vehicle Insurance", "link", data?.vehicleinsurance),
+    createData("Contract Details", "link", data?.contractdetails),
+
+    createData("Customs Clearance", "link", data?.customsclearance),
+
+    createData("Driving License", "link", data?.drivinglicense),
+
+    createData(
+      "Government Establishment",
+      "link",
+      data?.governmentestablishment
+    ),
+
+    createData("Identity Document", "link", data?.identitydocument),
+
+    createData("Labour Card", "link", data?.labourcard),
+
+    createData("Letter from Authority", "link", data?.letterfromauthority),
+
+    createData(
+      "Ministry of Commerce and Industry",
+      "link",
+      data?.ministryofcommerceandindustry
+    ),
+
+    createData("Passport", "link", data?.passport),
+
+    createData("Plates and Certificates", "link", data?.platesandcertificates),
+
+    createData("Vehicle License", "link", data.vehilcelicense),
+  ];
+
+  const getCarDetails = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:3002/vehicle/vehicleid/${vin}`
+      );
+      setData(response.data[0]);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  useEffect(() => {
+    getCarDetails();
+  }, [vin]);
+
   return (
-    <TableContainer component={Paper}>
-      <Table sx={{ maxWidth: 450, marginLeft: 20 }} aria-label="simple table">
-        <TableHead>
-          <TableRow>
-            <TableCell>Certificates</TableCell>
-            <TableCell align="right">Pdf</TableCell>
-          </TableRow>
-        </TableHead>
+    <TableContainer component={Paper} sx={{overflowX:'hidden'}}>
+      <Table sx={{ minWidth: 700,marginLeft:19,}} aria-label="simple table">
         <TableBody>
-          {rows.map((row) => (
+          {rows?.map((row) => (
             <TableRow
               key={row.name}
               sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
             >
               <TableCell component="th" scope="row">
-                {row.name}
+                {row?.name}
               </TableCell>
-              <TableCell
-                align="right"
-                style={{ cursor: "pointer",color:'blue',fontWeight:'500' }}
-                onClick={() => {
-                  window.open(
-                    "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
-                    "_blank"
-                  );
-                }}
-              >
-                {row.prev}
+              <TableCell>
+                {row.link ? (
+                  <a href={row.link} target="_blank" rel="noopener noreferrer">
+                    {row?.value}
+                  </a>
+                ) : (
+                  row.value
+                )}
               </TableCell>
             </TableRow>
           ))}

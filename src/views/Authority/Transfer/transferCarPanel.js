@@ -6,30 +6,24 @@ import Typography from "@mui/material/Typography";
 import { CardActionArea } from "@mui/material";
 import car from "assets/car.jpg";
 
-export default function TransferCarPanel() {
+export default function TransferCarPanel({data}) {
 
   return (
     <Card
       sx={{
-        maxWidth: 345,
-        maxHeight: 400,
-        backgroundColor: "wheat",
+        maxWidth: 505,
+        maxHeight: 600,
         marginTop: 5,
       }}
     >
       <CardActionArea>
-        <CardMedia
+      <CardMedia
           component="img"
-          height="140"
-          image={car}
+          width="58%"
+          image={data.vehiclepicture}
           alt="green iguana"
-          sx={{ height: 300, objectFit: "contain" }}
+          sx={{height:"59%",objectFit:'cover'}}
         />
-        <CardContent>
-          <Typography gutterBottom variant="h2" component="div">
-            <Typography variant="h4"> Vehicle No</Typography> 7324724
-          </Typography>
-        </CardContent>
       </CardActionArea>
     </Card>
   );

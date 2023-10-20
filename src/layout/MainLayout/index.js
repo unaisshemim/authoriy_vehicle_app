@@ -16,6 +16,7 @@ import { SET_MENU } from 'store/actions';
 
 // assets
 import { IconChevronRight } from '@tabler/icons';
+import { Toaster } from 'react-hot-toast';
 
 // styles
 const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })(({ theme, open }) => ({
@@ -66,6 +67,7 @@ const MainLayout = () => {
   return (
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
+      <Toaster/>
       {/* header */}
       <AppBar
         enableColorOnDark
