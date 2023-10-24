@@ -43,6 +43,7 @@ const columns = [
 ];
 const [data, setData] = useState([]);
 const rows = [];
+console.log(data)
 
 const getTransferVehicle = async () => {
   try {

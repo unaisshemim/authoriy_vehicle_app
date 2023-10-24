@@ -5,30 +5,24 @@ import CardMedia from "@mui/material/CardMedia";
 import Typography from "@mui/material/Typography";
 import { CardActionArea } from "@mui/material";
 
-
-export default function CarPanel({data}) {
-
+export default function CarPanel({ data }) {
   return (
     <Card
       sx={{
         maxWidth: 505,
         maxHeight: 600,
         marginTop: 5,
-      
-
       }}
     >
-      <CardActionArea >
+      <CardActionArea>
         <CardMedia
           component="img"
           width="58%"
           image={data.vehiclepicture}
           alt="green iguana"
-          sx={{height:"59%",objectFit:'cover'}}
+          sx={{ height: "59%", objectFit: "cover" }}
         />
-        
       </CardActionArea>
-     
     </Card>
   );
 }

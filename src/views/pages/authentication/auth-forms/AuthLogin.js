@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 
 // material-ui
@@ -6,17 +6,12 @@ import { useTheme } from '@mui/material/styles';
 import {
   Box,
   Button,
-  Checkbox,
   Divider,
   FormControl,
-  FormControlLabel,
   FormHelperText,
   Grid,
-  IconButton,
-  InputAdornment,
   InputLabel,
   OutlinedInput,
-  Stack,
   Typography,
   useMediaQuery
 } from '@mui/material';
@@ -24,48 +19,87 @@ import {
 // third party
 import * as Yup from 'yup';
 import { Formik } from 'formik';
+import MetaMask from 'assets/MetaMask.png';
+import { useNavigate } from 'react-router-dom';
 
 // project imports
-import useScriptRef from 'hooks/useScriptRef';
+
 import AnimateButton from 'ui-component/extended/AnimateButton';
+import toast, { Toaster } from 'react-hot-toast';
+
+import { publicRequest } from 'requestMethod';
+import axios from 'axios';
 
 // assets
-import Visibility from '@mui/icons-material/Visibility';
-import VisibilityOff from '@mui/icons-material/VisibilityOff';
-
-import Google from 'assets/images/icons/social-google.svg';
 
 // ============================|| FIREBASE - LOGIN ||============================ //
 
 const FirebaseLogin = ({ ...others }) => {
+  const navigate = useNavigate();
+
   const theme = useTheme();
-  const scriptedRef = useScriptRef();
+
   const matchDownSM = useMediaQuery(theme.breakpoints.down('md'));
   const customization = useSelector((state) => state.customization);
-  const [checked, setChecked] = useState(true);
 
-  const googleHandler = async () => {
-    console.error('Login');
+  const [address, setAddress] = useState(null);
+
+
+  const metaHandler = async () => {
+    console.log('request started');
+    if (window.ethereum) {
+      try {
+        const accounts = await window.ethereum.request({
+          method: 'eth_requestAccounts'
+        });
+        setAddress(accounts[0]);
+
+        localStorage.setItem('metamaskaddress', JSON.stringify(accounts[0]));
+        signIn();
+      } catch (error) {
+        console.error(error);
+      }
+    } else {
+      window.alert('no metamask is installed ');
+      console.log('not detected');
+    }
   };
 
-  const [showPassword, setShowPassword] = useState(false);
-  const handleClickShowPassword = () => {
-    setShowPassword(!showPassword);
-  };
+  const signIn = async () => {
+    try {
+      const response = await axios.post('/login', {
+        metamaskaddress: JSON.parse(localStorage.getItem('metamaskaddress'))
+      });
+      console.log(response)
+      localStorage.setItem('userdata', JSON.stringify(response.data));
 
-  const handleMouseDownPassword = (event) => {
-    event.preventDefault();
+      if (!response.data) {
+        toast.error('No Account Found , Fill Email and Name to Create New ');
+      } else {
+        return navigate('/dashboard');
+      }
+    } catch (error) {
+      console.log(error);
+      if (error.code === 'ERR_NETWORK') {
+        toast.error('Network issue');
+      }
+    }
   };
+  useEffect(() => {
+
+
+  }, [address]);
 
   return (
     <>
       <Grid container direction="column" justifyContent="center" spacing={2}>
+        <Toaster />
         <Grid item xs={12}>
           <AnimateButton>
             <Button
               disableElevation
               fullWidth
-              onClick={googleHandler}
+              onClick={metaHandler}
               size="large"
               variant="outlined"
               sx={{
@@ -75,9 +109,9 @@ const FirebaseLogin = ({ ...others }) => {
               }}
             >
               <Box sx={{ mr: { xs: 1, sm: 2, width: 20 } }}>
-                <img src={Google} alt="google" width={16} height={16} style={{ marginRight: matchDownSM ? 8 : 16 }} />
+                <img src={MetaMask} alt="google" width={30} height={30} style={{ marginRight: matchDownSM ? 8 : 16 }} />
               </Box>
-              Sign in with Google
+              Sign in with Meta Mask
             </Button>
           </AnimateButton>
         </Grid>
@@ -113,41 +147,45 @@ const FirebaseLogin = ({ ...others }) => {
         </Grid>
         <Grid item xs={12} container alignItems="center" justifyContent="center">
           <Box sx={{ mb: 2 }}>
-            <Typography variant="subtitle1">Sign in with Email address</Typography>
+            <Typography variant="subtitle1">Sign Up</Typography>
           </Box>
         </Grid>
       </Grid>
 
       <Formik
         initialValues={{
-          email: 'info@codedthemes.com',
-          password: '123456',
-          submit: null
+          email: '',
+          name: ''
         }}
         validationSchema={Yup.object().shape({
           email: Yup.string().email('Must be a valid email').max(255).required('Email is required'),
-          password: Yup.string().max(255).required('Password is required')
+          name: Yup.string().max(255).required('Name is required')
         })}
-        onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
-          try {
-            if (scriptedRef.current) {
-              setStatus({ success: true });
-              setSubmitting(false);
+        onSubmit={async (values) => {
+          setAddress(JSON.parse(localStorage.getItem('metamaskaddress')))
+          if (address) {
+            let submitValue = { ...values, metamaskaddress: address };
+
+            try {
+              const response = await publicRequest.post('/signup', submitValue);
+
+              toast.success('Login Success');
+
+              localStorage.setItem('userdata', JSON.stringify(response.data));
+            
+              navigate('/dashboard');
+            } catch (error) {
+              console.log(error);
             }
-          } catch (err) {
-            console.error(err);
-            if (scriptedRef.current) {
-              setStatus({ success: false });
-              setErrors({ submit: err.message });
-              setSubmitting(false);
-            }
+          } else {
+            toast.error('Meta address not found');
           }
         }}
       >
         {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
-          <form noValidate onSubmit={handleSubmit} {...others} id="AuthId">
+          <form noValidate onSubmit={handleSubmit} {...others}>
             <FormControl fullWidth error={Boolean(touched.email && errors.email)} sx={{ ...theme.typography.customInput }}>
-              <InputLabel htmlFor="outlined-adornment-email-login">Email Address / Username</InputLabel>
+              <InputLabel htmlFor="outlined-adornment-email-login">Email Address </InputLabel>
               <OutlinedInput
                 id="outlined-adornment-email-login"
                 type="email"
@@ -155,7 +193,7 @@ const FirebaseLogin = ({ ...others }) => {
                 name="email"
                 onBlur={handleBlur}
                 onChange={handleChange}
-                label="Email Address / Username"
+                label="Email Address "
                 inputProps={{}}
               />
               {touched.email && errors.email && (
@@ -166,47 +204,18 @@ const FirebaseLogin = ({ ...others }) => {
             </FormControl>
 
             <FormControl fullWidth error={Boolean(touched.password && errors.password)} sx={{ ...theme.typography.customInput }}>
-              <InputLabel htmlFor="outlined-adornment-password-login">Password</InputLabel>
+              <InputLabel htmlFor="outlined-adornment-password-login">Name</InputLabel>
               <OutlinedInput
                 id="outlined-adornment-password-login"
-                type={showPassword ? 'text' : 'password'}
-                value={values.password}
-                name="password"
-                onBlur={handleBlur}
+                type="text"
+                value={values.name}
                 onChange={handleChange}
-                endAdornment={
-                  <InputAdornment position="end">
-                    <IconButton
-                      aria-label="toggle password visibility"
-                      onClick={handleClickShowPassword}
-                      onMouseDown={handleMouseDownPassword}
-                      edge="end"
-                      size="large"
-                    >
-                      {showPassword ? <Visibility /> : <VisibilityOff />}
-                    </IconButton>
-                  </InputAdornment>
-                }
-                label="Password"
+                label="Name"
+                name="name"
                 inputProps={{}}
               />
-              {touched.password && errors.password && (
-                <FormHelperText error id="standard-weight-helper-text-password-login">
-                  {errors.password}
-                </FormHelperText>
-              )}
             </FormControl>
-            <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1}>
-              <FormControlLabel
-                control={
-                  <Checkbox checked={checked} onChange={(event) => setChecked(event.target.checked)} name="checked" color="primary" />
-                }
-                label="Remember me"
-              />
-              <Typography variant="subtitle1" color="secondary" sx={{ textDecoration: 'none', cursor: 'pointer' }}>
-                Forgot Password?
-              </Typography>
-            </Stack>
+
             {errors.submit && (
               <Box sx={{ mt: 3 }}>
                 <FormHelperText error>{errors.submit}</FormHelperText>
