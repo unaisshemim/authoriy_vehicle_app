@@ -6,9 +6,9 @@ import TableContainer from "@mui/material/TableContainer";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import { useLocation } from "react-router";
-import axios from "axios";
 import { useState } from "react";
 import { useEffect } from "react";
+import { publicRequest } from "requestMethod";
 
 function createData(name, value, link = null) {
   return { name, value, link };
@@ -62,8 +62,8 @@ export default function CarTable() {
 
   const getCarDetails = async () => {
     try {
-      const response = await axios.get(
-        `http://localhost:3002/vehicle/vehicleid/${vin}`
+      const response = await publicRequest.get(
+        `/vehicleid/${vin}`
       );
       setData(response.data[0]);
     } catch (error) {

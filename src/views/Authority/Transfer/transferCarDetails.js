@@ -6,10 +6,10 @@ import { Button } from "@mui/material";
 import DoDisturbAltIcon from "@mui/icons-material/DoDisturbAlt";
 import SendIcon from "@mui/icons-material/Send";
 import { Link, useLocation } from "react-router-dom";
-import axios from "axios";
 import toast from "react-hot-toast";
 import { useState } from "react";
 import { useEffect } from "react";
+import { publicRequest } from "requestMethod";
 
 const TransferCarDetails = () => {
   let { state } = useLocation();
@@ -18,8 +18,8 @@ const TransferCarDetails = () => {
 
   const getCarDetails = async () => {
     try {
-      const response = await axios.get(
-        `http://localhost:3002/vehicle/vehicleid/${vin}`
+      const response = await publicRequest.get(
+        `/vehicleid/${vin}`
       );
       setData(response.data[0]);
     } catch (error) {
@@ -29,8 +29,8 @@ const TransferCarDetails = () => {
 
   const handleAccept = async () => {
     try {
-      const response = await axios.put(
-        `http://localhost:3002/vehicle/authoritytransferapprove/${vin}`
+      const response = await publicRequest.put(
+        `/authoritytransferapprove/${vin}`
       );
       console.log(response);
       toast.success("Apporoved");
@@ -41,8 +41,8 @@ const TransferCarDetails = () => {
 
   const handleReject=async()=>{
     try {
-      const response = await axios.put(
-        `http://localhost:3002/vehicle/authoritytransferreject/${vin}`
+      const response = await publicRequest.put(
+        `/authoritytransferreject/${vin}`
       );
       console.log(response);
       toast.success("Declined");

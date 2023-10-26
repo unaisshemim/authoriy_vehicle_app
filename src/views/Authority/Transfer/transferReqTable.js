@@ -2,8 +2,8 @@ import * as React from "react";
 import { DataGrid } from "@mui/x-data-grid";
 import { Link } from "react-router-dom";
 import { useState } from "react";
-import axios from "axios";
 import { useEffect } from "react";
+import { publicRequest } from "requestMethod";
 
 
 export default function TransferReqTable() {
@@ -47,8 +47,8 @@ console.log(data)
 
 const getTransferVehicle = async () => {
   try {
-    const response = await axios.get(
-      "http://localhost:3002/vehicle/transferauthority"
+    const response = await publicRequest.get(
+      "/transferauthority"
     );
     setData(response.data);
   } catch (error) {

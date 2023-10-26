@@ -2,8 +2,8 @@ import * as React from "react";
 import { DataGrid } from "@mui/x-data-grid";
 import { Link } from "react-router-dom";
 import { useEffect } from "react";
-import axios from "axios";
 import { useState } from "react";
+import { publicRequest } from "requestMethod";
 
 export default function ReqTable() {
 
@@ -44,9 +44,10 @@ export default function ReqTable() {
 
   const getRegisterVehicle = async () => {
     try {
-      const response = await axios.get(
-        "http://localhost:3002/vehicle/registerlist"
+      const response = await publicRequest.get(
+        "/registerlist"
       );
+      console.log(response.data)
       setData(response.data);
     } catch (error) {
       console.log(error);

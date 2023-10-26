@@ -28,7 +28,6 @@ import AnimateButton from 'ui-component/extended/AnimateButton';
 import toast, { Toaster } from 'react-hot-toast';
 
 import { publicRequest } from 'requestMethod';
-import axios from 'axios';
 
 // assets
 
@@ -64,10 +63,10 @@ const FirebaseLogin = ({ ...others }) => {
       console.log('not detected');
     }
   };
-
+console.log(localStorage.getItem('metamaskaddress'))
   const signIn = async () => {
     try {
-      const response = await axios.post('/login', {
+      const response = await publicRequest.post('/authoritylogin', {
         metamaskaddress: JSON.parse(localStorage.getItem('metamaskaddress'))
       });
       console.log(response)
@@ -76,6 +75,7 @@ const FirebaseLogin = ({ ...others }) => {
       if (!response.data) {
         toast.error('No Account Found , Fill Email and Name to Create New ');
       } else {
+        
         return navigate('/dashboard');
       }
     } catch (error) {
@@ -167,7 +167,7 @@ const FirebaseLogin = ({ ...others }) => {
             let submitValue = { ...values, metamaskaddress: address };
 
             try {
-              const response = await publicRequest.post('/signup', submitValue);
+              const response = await publicRequest.post('/authoritysignup', submitValue);
 
               toast.success('Login Success');
 
